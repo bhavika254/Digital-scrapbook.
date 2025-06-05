@@ -356,15 +356,34 @@
             localStorage.setItem('memories', JSON.stringify(data));
             memoryCount = data.bf.length + data.gf.length;
         }
-    
-        function loadMemories() {
-            const saved = localStorage.getItem('memories');
-            if (!saved) return;
-    
-            const data = JSON.parse(saved);
-            data.bf.forEach(mem => addMemory(mem.photo, mem.text, mem.date, 'bf'));
-            data.gf.forEach(mem => addMemory(mem.photo, mem.text, mem.date, 'gf'));
-        }
+    function loadMemories() {
+    const saved = localStorage.getItem('memories');
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+    data.bf.forEach(mem => {
+        const card = createMemoryCard(mem.photo, mem.text, mem.date);
+        card.querySelector('.delete-btn').addEventListener('click', () => {
+            card.remove();
+            memoryCount = Math.max(0, memoryCount - 1);
+            saveMemories();
+        });
+        bfColumn.appendChild(card);
+        memoryCount++;
+    });
+
+    data.gf.forEach(mem => {
+        const card = createMemoryCard(mem.photo, mem.text, mem.date);
+        card.querySelector('.delete-btn').addEventListener('click', () => {
+            card.remove();
+            memoryCount = Math.max(0, memoryCount - 1);
+            saveMemories();
+        });
+        gfColumn.appendChild(card);
+        memoryCount++;
+    });
+}
+
     
         function addMemory(photoData, memoryText, date, type) {
             const memoryCard = createMemoryCard(photoData, memoryText, date);
@@ -498,6 +517,7 @@ musicToggle.addEventListener('click', () => {
         musicToggle.textContent = '🔇 Music Off';
     }
 });
+loadMemories();
 
     </script>
        
